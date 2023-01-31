@@ -25,57 +25,6 @@ class LiveDemoTest {
             // endregion
     }
 
-    @Test
-    fun `Repositories should live in the data package`() {
-
-        /*
-        ArchRuleDefinition.classes()
-            .that()
-            .haveSimpleNameEndingWith("Repository")
-            .should()
-            .resideInAPackage("com.isaacudy.archunit.example.data..")
-            .check(classes)
-         */
-    }
-
-    @Test
-    fun `The Persistence layer should live in the data package`() {
-
-        /*
-        ArchRuleDefinition.classes()
-            .that(PersistenceLayer.isPersistenceLayer)
-            .should()
-            .resideInAPackage("com.isaacudy.archunit.example.data..")
-            .check(classes)
-        */
-    }
-
-    @Test
-    fun `Repository object functions must be suspending, or return Flows`() {
-
-        /*
-        ArchRuleDefinition.methods()
-            .that(
-                describe("declared in Repository") {
-                    it.owner.simpleName.endsWith("Repository")
-                }
-            )
-            .and()
-            .arePublic()
-            .and()
-            .doNotHaveModifier(JavaModifier.SYNTHETIC)
-            .should(
-                ArchCondition.from(
-                    describe("functions that are suspending") {
-                        it.reflect().kotlinFunction?.isSuspend == true
-                    }
-                )
-            )
-            .orShould()
-            .haveRawReturnType(assignableTo(Flow::class.java))
-            .check(classes)
-         */
-    }
 
     @Test
     fun `The ViewModel layer can depend on the Domain layer`() {
@@ -108,6 +57,47 @@ class LiveDemoTest {
 
             .whereLayer(RepositoryLayer.name).mayOnlyAccessLayers(NetworkLayer.name, PersistenceLayer.name)
             .ignoreDependency(alwaysTrue(), DomainLayer.isModel)
+            .check(classes)
+         */
+    }
+
+    @Test
+    fun `Repositories should live in the data package`() {
+
+
+        /*
+        ArchRuleDefinition.classes()
+            .that()
+            .haveSimpleNameEndingWith("Repository")
+            .should()
+            .resideInAPackage("com.isaacudy.archunit.example.data..")
+            .check(classes)
+         */
+    }
+
+    @Test
+    fun `Repository object functions must be suspending, or return Flows`() {
+
+        /*
+        ArchRuleDefinition.methods()
+            .that(
+                describe("declared in Repository") {
+                    it.owner.simpleName.endsWith("Repository")
+                }
+            )
+            .and()
+            .arePublic()
+            .and()
+            .doNotHaveModifier(JavaModifier.SYNTHETIC)
+            .should(
+                ArchCondition.from(
+                    describe("functions that are suspending") {
+                        it.reflect().kotlinFunction?.isSuspend == true
+                    }
+                )
+            )
+            .orShould()
+            .haveRawReturnType(assignableTo(Flow::class.java))
             .check(classes)
          */
     }
