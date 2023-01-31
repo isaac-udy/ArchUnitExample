@@ -25,8 +25,27 @@ class LiveDemoTest {
             // endregion
     }
 
+
+    @Test
+    fun `The ViewModel layer can depend on the Domain layer`() {
+
+        /*
+        Architectures.layeredArchitecture()
+            .consideringOnlyDependenciesInLayers()
+            .layer(PersistenceLayer.name).definedBy(PersistenceLayer.isPersistenceLayer)
+            .layer(NetworkLayer.name).definedBy(NetworkLayer.isNetworkLayer)
+            .layer(RepositoryLayer.name).definedBy(RepositoryLayer.isRepositoryLayer)
+            .layer(DomainLayer.name).definedBy(DomainLayer.isDomainLayer)
+            .layer(ViewModelLayer.name).definedBy(ViewModelLayer.isViewModelLayer)
+
+            .whereLayer(ViewModelLayer.name).mayOnlyAccessLayers(DomainLayer.name)
+            .check(classes)
+         */
+    }
+
     @Test
     fun `Repositories should live in the data package`() {
+
 
         /*
         ArchRuleDefinition.classes()
@@ -36,18 +55,6 @@ class LiveDemoTest {
             .resideInAPackage("com.isaacudy.archunit.example.data..")
             .check(classes)
          */
-    }
-
-    @Test
-    fun `The Persistence layer should live in the data package`() {
-
-        /*
-        ArchRuleDefinition.classes()
-            .that(PersistenceLayer.isPersistenceLayer)
-            .should()
-            .resideInAPackage("com.isaacudy.archunit.example.data..")
-            .check(classes)
-        */
     }
 
     @Test
@@ -76,24 +83,6 @@ class LiveDemoTest {
             .check(classes)
          */
     }
-
-    @Test
-    fun `The ViewModel layer can depend on the Domain layer`() {
-
-        /*
-        Architectures.layeredArchitecture()
-            .consideringOnlyDependenciesInLayers()
-            .layer(PersistenceLayer.name).definedBy(PersistenceLayer.isPersistenceLayer)
-            .layer(NetworkLayer.name).definedBy(NetworkLayer.isNetworkLayer)
-            .layer(RepositoryLayer.name).definedBy(RepositoryLayer.isRepositoryLayer)
-            .layer(DomainLayer.name).definedBy(DomainLayer.isDomainLayer)
-            .layer(ViewModelLayer.name).definedBy(ViewModelLayer.isViewModelLayer)
-
-            .whereLayer(ViewModelLayer.name).mayOnlyAccessLayers(DomainLayer.name)
-            .check(classes)
-         */
-    }
-
     @Test
     fun `The Repository layer can depend on the Network layer, Persistence layer and Models from the Domain layer`() {
 
