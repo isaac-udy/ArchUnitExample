@@ -25,7 +25,7 @@ class RealListKey : NavigationKey.SupportsPush
 @Composable
 @NavigationDestination(RealListKey::class)
 fun RealListScreen() {
-    val viewModel = viewModel<RealListViewModel>()
+    val viewModel = viewModel<RealListPresenter>()
     val state by viewModel.stateFlow.collectAsState()
 
     LazyColumn(

@@ -18,7 +18,7 @@ data class RealListState(
 )
 
 @HiltViewModel
-class RealListViewModel @Inject constructor(
+class RealListPresenter @Inject constructor(
     getRealsForDisplay: GetRealsForDisplay,
     private val setRealFavorite: SetRealFavorite,
 ) : StateViewModel<RealListState>() {

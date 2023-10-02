@@ -1,14 +1,28 @@
 package com.isaacudy.archunit.example
 
+import androidx.lifecycle.ViewModel
+import com.isaacudy.archunit.example.layers.DomainLayer
+import com.isaacudy.archunit.example.layers.NetworkLayer
+import com.isaacudy.archunit.example.layers.PersistenceLayer
+import com.isaacudy.archunit.example.layers.RepositoryLayer
+import com.isaacudy.archunit.example.layers.ViewModelLayer
 import com.isaacudy.archunit.example.predicates.isDaggerOrHiltClass
 import com.isaacudy.archunit.example.predicates.isRealKotlinClass
 import com.isaacudy.archunit.example.utils.DemoDisplayFormat
+import com.tngtech.archunit.base.DescribedPredicate.alwaysTrue
+import com.tngtech.archunit.base.DescribedPredicate.describe
 import com.tngtech.archunit.base.DescribedPredicate.not
+import com.tngtech.archunit.core.domain.JavaClass.Predicates.assignableTo
+import com.tngtech.archunit.core.domain.JavaModifier
 import com.tngtech.archunit.core.importer.ClassFileImporter
+import com.tngtech.archunit.lang.ArchCondition
+import com.tngtech.archunit.lang.syntax.ArchRuleDefinition
+import com.tngtech.archunit.library.Architectures
+import kotlinx.coroutines.flow.Flow
 import org.junit.Test
+import kotlin.reflect.jvm.kotlinFunction
 
-class LiveDemoTest {
-
+class ExampleArchitectureTests {
     init {
         // region Configure simple logging format for the live demo
         DemoDisplayFormat.install()
@@ -25,11 +39,22 @@ class LiveDemoTest {
             // endregion
     }
 
+    @Test
+    fun `verify ViewModels are defined correctly`() {
+        ArchRuleDefinition.classes()
+            .that()
+            .areAssignableTo(ViewModel::class.java)
+            .or()
+            .haveSimpleNameEndingWith("ViewModel")
+            .should()
+            .haveSimpleNameEndingWith("ViewModel")
+            .andShould()
+            .beAssignableTo(ViewModel::class.java)
+            .check(classes)
+    }
 
     @Test
     fun `The ViewModel layer can depend on the Domain layer`() {
-
-        /*
         Architectures.layeredArchitecture()
             .consideringOnlyDependenciesInLayers()
             .layer(PersistenceLayer.name).definedBy(PersistenceLayer.isPersistenceLayer)
@@ -40,13 +65,10 @@ class LiveDemoTest {
 
             .whereLayer(ViewModelLayer.name).mayOnlyAccessLayers(DomainLayer.name)
             .check(classes)
-         */
     }
 
     @Test
     fun `The Repository layer can depend on the Network layer, Persistence layer and Models from the Domain layer`() {
-
-        /*
         Architectures.layeredArchitecture()
             .consideringOnlyDependenciesInLayers()
             .layer(PersistenceLayer.name).definedBy(PersistenceLayer.isPersistenceLayer)
@@ -58,27 +80,20 @@ class LiveDemoTest {
             .whereLayer(RepositoryLayer.name).mayOnlyAccessLayers(NetworkLayer.name, PersistenceLayer.name)
             .ignoreDependency(alwaysTrue(), DomainLayer.isModel)
             .check(classes)
-         */
     }
 
     @Test
     fun `Repositories should live in the data package`() {
-
-
-        /*
         ArchRuleDefinition.classes()
             .that()
             .haveSimpleNameEndingWith("Repository")
             .should()
             .resideInAPackage("com.isaacudy.archunit.example.data..")
             .check(classes)
-         */
     }
 
     @Test
     fun `Repository object functions must be suspending, or return Flows`() {
-
-        /*
         ArchRuleDefinition.methods()
             .that(
                 describe("declared in Repository") {
@@ -99,6 +114,5 @@ class LiveDemoTest {
             .orShould()
             .haveRawReturnType(assignableTo(Flow::class.java))
             .check(classes)
-         */
     }
 }

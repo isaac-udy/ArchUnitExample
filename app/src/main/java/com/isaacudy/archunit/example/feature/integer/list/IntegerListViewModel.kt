@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import java.math.BigInteger
 import javax.inject.Inject
 
-data class IntegerListState(
+data class ModelForIntegerListViewModel(
     val integers: AsyncState<List<IntegerItemState>>
 )
 
@@ -35,11 +35,11 @@ class IntegerListViewModel @Inject constructor(
     getAllIntegers: GetIntegers,
     private val userRepository: UserRepository,
     private val getIntegerName: GetIntegerName,
-) : StateViewModel<IntegerListState>() {
+) : StateViewModel<ModelForIntegerListViewModel>() {
 
     private val navigation by navigationHandle<IntegerListKey>()
 
-    override val initialState: IntegerListState = IntegerListState(
+    override val initialState: ModelForIntegerListViewModel = ModelForIntegerListViewModel(
         integers = AsyncState.none()
     )
 
