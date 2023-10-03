@@ -12,7 +12,9 @@ import com.isaacudy.archunit.example.utils.DemoDisplayFormat
 import com.tngtech.archunit.base.DescribedPredicate.alwaysTrue
 import com.tngtech.archunit.base.DescribedPredicate.describe
 import com.tngtech.archunit.base.DescribedPredicate.not
+import com.tngtech.archunit.core.domain.JavaClass
 import com.tngtech.archunit.core.domain.JavaClass.Predicates.assignableTo
+import com.tngtech.archunit.core.domain.JavaMethod
 import com.tngtech.archunit.core.domain.JavaModifier
 import com.tngtech.archunit.core.importer.ClassFileImporter
 import com.tngtech.archunit.lang.ArchCondition
@@ -36,7 +38,7 @@ class ExampleArchitectureTests {
             // region Filter the imported classes to exclude Dagger/Hilt and compiler-generated kotlin classes
             .that(not(isDaggerOrHiltClass)) // filter out some generated code
             .that(isRealKotlinClass) // filter out classes created by the Kotlin compiler
-            // endregion
+        // endregion
     }
 
     @Test
@@ -50,6 +52,47 @@ class ExampleArchitectureTests {
             .haveSimpleNameEndingWith("ViewModel")
             .andShould()
             .beAssignableTo(ViewModel::class.java)
+            .check(classes)
+    }
+
+    @Test
+    fun `verify ViewModels are defined correctly (but different)`() {
+        val mightBeViewModel = describe<JavaClass>("might be a ViewModel") { cls ->
+            cls.name.endsWith("ViewModel") ||
+                    cls.isAssignableTo(ViewModel::class.java)
+        }
+
+        val isValidViewModel = describe<JavaClass>("is valid ViewModel") { cls ->
+            cls.name.endsWith("ViewModel") &&
+                    cls.isAssignableTo(ViewModel::class.java)
+        }
+
+        ArchRuleDefinition.classes()
+            .that(mightBeViewModel)
+            .should(ArchCondition.from(isValidViewModel))
+            .check(classes)
+    }
+
+    // this is a bit of a silly/pointless test, but it's useful to show Kotlin interop
+    @Test
+    fun `classes with companion objects should only define suspending functions (??)`() {
+        val hasCompanion = describe<JavaClass>("has companion") { cls ->
+            val kclass = cls.reflect().kotlin
+            return@describe kclass.nestedClasses.any { it.isCompanion }
+        }
+
+        val isSuspending = describe<JavaMethod>("is suspending") {
+            val kfun = it.reflect().kotlinFunction
+                ?: return@describe false
+            return@describe kfun.isSuspend
+        }
+
+        ArchRuleDefinition.methods()
+            .that()
+            .arePublic()
+            .and()
+            .areDeclaredInClassesThat(hasCompanion)
+            .should(ArchCondition.from(isSuspending))
             .check(classes)
     }
 
@@ -77,7 +120,8 @@ class ExampleArchitectureTests {
             .layer(DomainLayer.name).definedBy(DomainLayer.isDomainLayer)
             .layer(ViewModelLayer.name).definedBy(ViewModelLayer.isViewModelLayer)
 
-            .whereLayer(RepositoryLayer.name).mayOnlyAccessLayers(NetworkLayer.name, PersistenceLayer.name)
+            .whereLayer(RepositoryLayer.name)
+            .mayOnlyAccessLayers(NetworkLayer.name, PersistenceLayer.name)
             .ignoreDependency(alwaysTrue(), DomainLayer.isModel)
             .check(classes)
     }

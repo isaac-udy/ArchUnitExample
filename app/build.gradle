@@ -92,7 +92,7 @@ dependencies {
     // Add the ArchUnit dependency to your app module
     // In a multi-module project, most often you'll want to verify the app module
     // because it will have visibility of the classpath from all modules in the project
-    testImplementation "com.tngtech.archunit:archunit:1.0.1"
+    testImplementation "com.tngtech.archunit:archunit:1.1.0"
     testImplementation "org.jetbrains.kotlin:kotlin-reflect:1.9.0"
 
     androidTestImplementation "androidx.test.ext:junit:1.1.5"
